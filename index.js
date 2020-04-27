@@ -1,3 +1,4 @@
+// eslint-disable-next-line strict
 const store = {
   items: [
     { id: cuid(), name: 'apples', checked: false },
@@ -26,6 +27,10 @@ const generateItemElement = function (item) {
         <button class='shopping-item-delete js-item-delete'>
           <span class='button-label'>delete</span>
         </button>
+        <form class="edit-name" >
+        <input type="text" id="input-val-${item.id}" name="change-entry-name" placeholder="Change item name...">
+        <button type="submit">edit</button>
+      </form>
       </div>
     </li>`;
 };
@@ -34,6 +39,7 @@ const generateShoppingItemsString = function (shoppingList) {
   const items = shoppingList.map((item) => generateItemElement(item));
   return items.join('');
 };
+
 
 /**
  * Render the shopping list in the DOM
@@ -88,6 +94,22 @@ const handleItemCheckClicked = function () {
     render();
   });
 };
+
+const editListItem = function (id, newName) {
+  const foundItem = store.items.find(item => item.id === id);
+  foundItem.name = newName;
+};
+
+const handleEditListItem = function () {
+  $('.js-shopping-list').on('submit', '.edit-name', event => {
+    event.preventDefault();
+    const id = getItemIdFromElement(event.currentTarget);
+    const newName = $(`#input-val-${id}`).val();
+    editListItem(id, newName);
+    render();
+  });
+};
+
 
 const getItemIdFromElement = function (item) {
   return $(item)
@@ -160,6 +182,7 @@ const handleShoppingList = function () {
   handleItemCheckClicked();
   handleDeleteItemClicked();
   handleToggleFilterClick();
+  handleEditListItem();
 };
 
 // when the page loads, call `handleShoppingList`
